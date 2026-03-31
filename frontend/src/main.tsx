@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RouterProvider } from "react-router-dom";
-
+import "./i18n";
 import { ChakraProviderApp } from "./providers/chakra-provider";
 import { router } from "./routes";
 

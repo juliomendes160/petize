@@ -2,13 +2,14 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import {
   Box,
-  Image,
   Text,
   VStack,
   Link,
   Spinner,
   Center,
   Heading,
+  Avatar,
+  Flex,
 } from "@chakra-ui/react";
 
 import { useUser } from "../../hooks/useUser";
@@ -32,7 +33,7 @@ export function Profile() {
 
   if (userLoading) {
     return (
-      <Center height="100vh">
+      <Center h="100vh">
         <Spinner size="xl" />
       </Center>
     );
@@ -40,7 +41,7 @@ export function Profile() {
 
   if (error || !user) {
     return (
-      <Center height="100vh">
+      <Center h="100vh">
         <Text fontSize="lg" color="red.500">
           Usuário não encontrado
         </Text>
@@ -49,29 +50,42 @@ export function Profile() {
   }
 
   return (
-    <Box p={6}>
-      <VStack spacing={4} align="center">
-        <Image src={user.avatar_url} boxSize="120px" borderRadius="full" />
+    <Box p={4} maxW="900px" mx="auto">
+      <Flex
+        direction={{ base: "column", md: "row" }}
+        align={{ base: "center", md: "flex-start" }}
+        gap={6}
+      >
+        <Avatar src={user.avatar_url} size="xl" />
 
-        <Text fontSize="xl" fontWeight="bold">
-          {user.name ?? user.login}
-        </Text>
+        <VStack align="start" spacing={2}>
+          <Text fontSize="2xl" fontWeight="bold">
+            {user.name ?? user.login}
+          </Text>
 
-        {user.bio && <Text>{user.bio}</Text>}
+          {user.bio && <Text>{user.bio}</Text>}
 
-        <Link href={user.html_url} color="blue.500" isExternal>
-          Ver no GitHub
-        </Link>
+          <Link href={user.html_url} color="blue.500" isExternal>
+            Ver no GitHub
+          </Link>
 
-        {user.twitter_username && <Text>@{user.twitter_username}</Text>}
-      </VStack>
+          {user.twitter_username && (
+            <Text fontSize="sm">@{user.twitter_username}</Text>
+          )}
+        </VStack>
+      </Flex>
 
       <Box mt={8}>
-        <Heading size="lg" mb={4}>
-          Repositórios
-        </Heading>
+        <Flex
+          justify="space-between"
+          align={{ base: "flex-start", md: "center" }}
+          direction={{ base: "column", md: "row" }}
+          gap={4}
+        >
+          <Heading size="lg">Repositórios</Heading>
 
-        <SortSelect value={sort} onChange={setSort} />
+          <SortSelect value={sort} onChange={setSort} />
+        </Flex>
 
         <RepoList
           repos={repos}

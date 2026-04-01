@@ -12,6 +12,10 @@ export function SortSelect({ value, onChange }: SortSelectProps) {
     <Select
       maxW="200px"
       value={value}
+      bg="white"
+      borderColor="gray.200"
+      focusBorderColor="purple.500"
+      _hover={{ borderColor: "gray.300" }}
       onChange={(e) => onChange(e.target.value as SortOption)}
     >
       <option value="updated">Últimos atualizados</option>

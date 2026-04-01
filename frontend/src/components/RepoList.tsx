@@ -1,4 +1,4 @@
-import { Box, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Box, Spinner, Text, VStack, Link } from "@chakra-ui/react";
 import type { Repo } from "../schemas/repo.schema";
 import { useRef, useCallback } from "react";
 
@@ -9,12 +9,7 @@ interface RepoListProps {
   loading: boolean;
 }
 
-export function RepoList({
-  repos,
-  loadMore,
-  hasMore,
-  loading,
-}: RepoListProps) {
+export function RepoList({ repos, loadMore, hasMore, loading }: RepoListProps) {
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastRepoRef = useCallback(
@@ -42,14 +37,31 @@ export function RepoList({
           <Box
             key={repo.id}
             ref={isLast ? lastRepoRef : undefined}
-            p={4}
-            borderWidth={1}
+            bg="white"
+            border="1px solid"
+            borderColor="gray.200"
             borderRadius="md"
+            p={4}
+            _hover={{ boxShadow: "md" }}
           >
-            <Text fontWeight="bold">{repo.name}</Text>
+            <Link
+              href={repo.html_url}
+              isExternal
+              fontWeight="bold"
+              color="blue.500"
+            >
+              {repo.name}
+            </Link>
 
-            <Text fontSize="sm">
-              {repo.description ?? "Sem descrição"}
+            {repo.description && (
+              <Text fontSize="sm" mt={2} color="gray.600">
+                {repo.description}
+              </Text>
+            )}
+
+            <Text fontSize="xs" color="gray.500" mt={2}>
+              ⭐ {repo.stargazers_count} •{" "}
+              {new Date(repo.updated_at).toLocaleDateString()}
             </Text>
           </Box>
         );

@@ -10,8 +10,8 @@ import {
   Heading,
   Avatar,
   Flex,
+  Button,
 } from "@chakra-ui/react";
-import { useTranslation } from "react-i18next";
 
 import { useUser } from "../../hooks/useUser";
 import { useRepos } from "../../hooks/useRepos";
@@ -21,8 +21,7 @@ import { SortSelect } from "../../components/SortSelect";
 type SortOption = "updated" | "stargazers" | "name";
 
 export function Profile() {
-  const { username } = useParams<{ username: string }>();
-  const { t } = useTranslation();
+  const { username = "" } = useParams<{ username: string }>();
 
   const { user, loading: userLoading, error } = useUser(username);
 
@@ -44,58 +43,74 @@ export function Profile() {
   if (error || !user) {
     return (
       <Center h="100vh">
-        <Text fontSize="lg" color="red.500">
-          {t("notFound")}
-        </Text>
+        <Text color="red.500">Usuário não encontrado</Text>
       </Center>
     );
   }
 
   return (
-    <Box p={4} maxW="900px" mx="auto">
-      <Flex
-        direction={{ base: "column", md: "row" }}
-        align={{ base: "center", md: "flex-start" }}
-        gap={6}
-      >
-        <Avatar src={user.avatar_url} size="xl" />
-
-        <VStack align="start" spacing={2}>
-          <Text fontSize="2xl" fontWeight="bold">
-            {user.name ?? user.login}
-          </Text>
-
-          {user.bio && <Text>{user.bio}</Text>}
-
-          <Link href={user.html_url} color="blue.500" isExternal>
-            {t("viewGithub")}
-          </Link>
-
-          {user.twitter_username && (
-            <Text fontSize="sm">@{user.twitter_username}</Text>
-          )}
-        </VStack>
-      </Flex>
-
-      <Box mt={8}>
-        <Flex
-          justify="space-between"
-          align={{ base: "flex-start", md: "center" }}
-          direction={{ base: "column", md: "row" }}
-          gap={4}
+    <Box bg="gray.100" minH="100vh" py={6}>
+      <Flex maxW="1100px" mx="auto" px={4} direction={{ base: "column", md: "row" }} gap={8}>
+        
+        {/* SIDEBAR */}
+        <Box
+          w={{ base: "full", md: "260px" }}
+          bg="white"
+          p={5}
+          borderRadius="md"
+          border="1px solid"
+          borderColor="gray.200"
         >
-          <Heading size="lg">{t("repositories")}</Heading>
+          <VStack
+            align={{ base: "center", md: "flex-start" }}
+            textAlign={{ base: "center", md: "left" }}
+            spacing={3}
+          >
+            <Avatar src={user.avatar_url} size="xl" />
 
-          <SortSelect value={sort} onChange={setSort} />
-        </Flex>
+            <Text fontWeight="bold" fontSize="lg">
+              {user.name ?? user.login}
+            </Text>
 
-        <RepoList
-          repos={repos}
-          loadMore={loadMore}
-          hasMore={hasMore}
-          loading={reposLoading}
-        />
-      </Box>
+            {user.bio && (
+              <Text fontSize="sm" color="gray.500">
+                {user.bio}
+              </Text>
+            )}
+
+            <Button colorScheme="purple" w="full">
+              Contato
+            </Button>
+
+            <Link href={user.html_url} isExternal color="blue.500">
+              GitHub
+            </Link>
+          </VStack>
+        </Box>
+
+        {/* CONTEÚDO */}
+        <Box flex="1">
+          <Flex
+            justify="space-between"
+            direction={{ base: "column", md: "row" }}
+            gap={4}
+            mb={4}
+          >
+            <Heading size="lg" color="gray.800">
+              Repositórios
+            </Heading>
+
+            <SortSelect value={sort} onChange={setSort} />
+          </Flex>
+
+          <RepoList
+            repos={repos}
+            loadMore={loadMore}
+            hasMore={hasMore}
+            loading={reposLoading}
+          />
+        </Box>
+      </Flex>
     </Box>
   );
 }

@@ -9,7 +9,12 @@ interface RepoListProps {
   loading: boolean;
 }
 
-export function RepoList({ repos, loadMore, hasMore, loading }: RepoListProps) {
+export function RepoList({
+  repos,
+  loadMore,
+  hasMore,
+  loading,
+}: RepoListProps) {
   const observer = useRef<IntersectionObserver | null>(null);
 
   const lastRepoRef = useCallback(
@@ -31,25 +36,21 @@ export function RepoList({ repos, loadMore, hasMore, loading }: RepoListProps) {
   return (
     <VStack spacing={4} align="stretch">
       {repos.map((repo, index) => {
-        if (index === repos.length - 1) {
-          return (
-            <Box
-              key={repo.id}
-              ref={lastRepoRef}
-              p={4}
-              borderWidth={1}
-              borderRadius="md"
-            >
-              <Text fontWeight="bold">{repo.name}</Text>
-              <Text fontSize="sm">{repo.description}</Text>
-            </Box>
-          );
-        }
+        const isLast = index === repos.length - 1;
 
         return (
-          <Box key={repo.id} p={4} borderWidth={1} borderRadius="md">
+          <Box
+            key={repo.id}
+            ref={isLast ? lastRepoRef : undefined}
+            p={4}
+            borderWidth={1}
+            borderRadius="md"
+          >
             <Text fontWeight="bold">{repo.name}</Text>
-            <Text fontSize="sm">{repo.description}</Text>
+
+            <Text fontSize="sm">
+              {repo.description ?? "Sem descrição"}
+            </Text>
           </Box>
         );
       })}

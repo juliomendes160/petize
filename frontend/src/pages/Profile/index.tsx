@@ -9,12 +9,12 @@ import {
   Spinner,
   Center,
   Heading,
-  Select,
 } from "@chakra-ui/react";
 
 import { useUser } from "../../hooks/useUser";
 import { useRepos } from "../../hooks/useRepos";
 import { RepoList } from "../../components/RepoList";
+import { SortSelect } from "../../components/SortSelect";
 
 type SortOption = "updated" | "stargazers" | "name";
 
@@ -71,18 +71,7 @@ export function Profile() {
           Repositórios
         </Heading>
 
-        <Select
-          mb={4}
-          maxW="200px"
-          value={sort}
-          onChange={(e) =>
-            setSort(e.target.value as SortOption)
-          }
-        >
-          <option value="updated">Últimos atualizados</option>
-          <option value="stargazers">Mais estrelas</option>
-          <option value="name">Ordem alfabética</option>
-        </Select>
+        <SortSelect value={sort} onChange={setSort} />
 
         <RepoList
           repos={repos}

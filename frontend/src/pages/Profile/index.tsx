@@ -11,6 +11,7 @@ import {
   Avatar,
   Flex,
 } from "@chakra-ui/react";
+import { useTranslation } from "react-i18next";
 
 import { useUser } from "../../hooks/useUser";
 import { useRepos } from "../../hooks/useRepos";
@@ -21,6 +22,7 @@ type SortOption = "updated" | "stargazers" | "name";
 
 export function Profile() {
   const { username } = useParams<{ username: string }>();
+  const { t } = useTranslation();
 
   const { user, loading: userLoading, error } = useUser(username);
 
@@ -43,7 +45,7 @@ export function Profile() {
     return (
       <Center h="100vh">
         <Text fontSize="lg" color="red.500">
-          Usuário não encontrado
+          {t("notFound")}
         </Text>
       </Center>
     );
@@ -66,7 +68,7 @@ export function Profile() {
           {user.bio && <Text>{user.bio}</Text>}
 
           <Link href={user.html_url} color="blue.500" isExternal>
-            Ver no GitHub
+            {t("viewGithub")}
           </Link>
 
           {user.twitter_username && (
@@ -82,7 +84,7 @@ export function Profile() {
           direction={{ base: "column", md: "row" }}
           gap={4}
         >
-          <Heading size="lg">Repositórios</Heading>
+          <Heading size="lg">{t("repositories")}</Heading>
 
           <SortSelect value={sort} onChange={setSort} />
         </Flex>

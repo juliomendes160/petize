@@ -6,11 +6,17 @@ i18n.use(initReactI18next).init({
     en: {
       translation: {
         search: "Search",
+        repositories: "Repositories",
+        notFound: "User not found",
+        viewGithub: "View on GitHub",
       },
     },
     pt: {
       translation: {
         search: "Buscar",
+        repositories: "Repositórios",
+        notFound: "Usuário não encontrado",
+        viewGithub: "Ver no GitHub",
       },
     },
   },

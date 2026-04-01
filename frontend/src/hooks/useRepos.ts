@@ -3,7 +3,9 @@ import { api } from "../services/api";
 import { repoSchema } from "../schemas/repo.schema";
 import type { Repo } from "../schemas/repo.schema";
 
-export function useRepos(username?: string) {
+export type SortOption = "updated" | "stargazers" | "name";
+
+export function useRepos(username?: string, sort: SortOption = "updated") {
   const [repos, setRepos] = useState<Repo[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -11,12 +13,10 @@ export function useRepos(username?: string) {
   const perPage = 10;
 
   useEffect(() => {
-    if (!username) return;
-
     setRepos([]);
     setPage(1);
     setHasMore(true);
-  }, [username]);
+  }, [username, sort]);
 
   useEffect(() => {
     if (!username || !hasMore) return;
@@ -25,14 +25,24 @@ export function useRepos(username?: string) {
       setLoading(true);
       try {
         const response = await api.get(`/users/${username}/repos`, {
-          params: { page, per_page: perPage, sort: "updated" },
+          params: {
+            page,
+            per_page: perPage,
+            sort: sort === "updated" ? "updated" : "full_name",
+            direction: sort === "stargazers" ? "desc" : "asc",
+          },
         });
+
         const data = repoSchema.array().parse(response.data);
+        
+        if (sort === "stargazers") {
+          data.sort((a, b) => b.stargazers_count - a.stargazers_count);
+        }
 
         setRepos((prev) => [...prev, ...data]);
         if (data.length < perPage) setHasMore(false);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        console.error(err);
         setHasMore(false);
       } finally {
         setLoading(false);
@@ -40,12 +50,10 @@ export function useRepos(username?: string) {
     };
 
     fetchRepos();
-  }, [username, page]);
+  }, [username, page, sort, hasMore]);
 
   const loadMore = () => {
-    if (!loading && hasMore) {
-      setPage((prev) => prev + 1);
-    }
+    if (!loading && hasMore) setPage((prev) => prev + 1);
   };
 
   return { repos, loading, hasMore, loadMore };
